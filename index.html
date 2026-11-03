@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MADKID Roblox Tour | Official</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #050505;
+            --surface: #151515;
+            --primary: #ff0033;
+            --text: #ffffff;
+            --text-muted: #a0a0a0;
+            --gold: #ffd700;
+            --input-bg: #111;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            width: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 0%, #2a0005 0%, var(--bg) 70%);
+        }
+
+        @keyframes glow-pulse { 0% { text-shadow: 0 0 10px rgba(255, 0, 51, 0.6); } 50% { text-shadow: 0 0 20px rgba(255, 0, 51, 1), 0 0 40px rgba(255, 0, 51, 0.8); } 100% { text-shadow: 0 0 10px rgba(255, 0, 51, 0.6); } }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes badge-pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 0, 51, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 0, 51, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 0, 51, 0); } }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 10;
+        }
+
+        .logo { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+        .logo span { color: var(--primary); font-style: italic; }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            padding: 0 15px 20px;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hero-side {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+        }
+
+        .hero-side h1 { font-family: 'Oswald', sans-serif; font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1; text-transform: uppercase; margin-bottom: 5px; animation: glow-pulse 3s infinite; }
+        .hero-side h1 span { display: block; color: var(--primary); font-size: clamp(1rem, 4vw, 2rem); letter-spacing: 3px; margin-top: 5px; -webkit-text-stroke: 1px var(--primary); color: transparent; }
+        .hero-side p.desc { color: var(--text-muted); max-width: 500px; font-size: clamp(0.8rem, 3vw, 1rem); line-height: 1.4; margin-top: 15px; }
+
+        .countdown-wrapper { margin: 15px 0; background: #111; padding: 15px 20px; border-radius: 15px; border: 1px solid #333; width: 100%; max-width: 400px; }
+        .countdown-title { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .countdown-title span { color: var(--primary); font-weight: bold; font-size: 1.1em; }
+        .countdown-container { display: flex; gap: 10px; justify-content: center; }
+        .countdown-box { background: #1a1a1a; border: 1px solid #333; padding: 8px 10px; border-radius: 8px; min-width: 60px; flex: 1;}
+        .countdown-box span { display: block; font-family: 'Oswald', sans-serif; font-size: clamp(1.2rem, 5vw, 1.8rem); font-weight: 700; color: var(--primary); }
+        .countdown-box p { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; margin: 0; }
+
+        .grid-side { width: 100%; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+
+        .card { background: var(--surface); border: 1px solid #333; border-radius: 12px; padding: 15px 10px; text-align: center; transition: transform 0.3s, border-color 0.3s; position: relative; }
+        .card.next-show { border-color: var(--primary); box-shadow: 0 0 15px rgba(255, 0, 51, 0.3); background: linear-gradient(180deg, rgba(30, 0, 5, 1) 0%, var(--surface) 100%); }
+        .card.past-show { opacity: 0.5; filter: grayscale(1); border-color: #333; }
+
+        .stamp-past { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); border: 2px solid rgba(255, 0, 51, 0.8); color: rgba(255, 0, 51, 0.8); font-family: 'Oswald', sans-serif; font-size: 1.1rem; font-weight: 900; padding: 2px 10px; text-transform: uppercase; border-radius: 6px; pointer-events: none; z-index: 10; letter-spacing: 1px; background: rgba(0,0,0,0.5); }
+        .badge-next { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; padding: 3px 10px; border-radius: 15px; letter-spacing: 1px; animation: badge-pulse 2s infinite; white-space: nowrap; z-index: 10; }
+
+        .card .city { font-family: 'Oswald', sans-serif; font-size: clamp(1.1rem, 4vw, 1.3rem); text-transform: uppercase; margin-bottom: 2px; }
+        .card .date { color: var(--primary); font-weight: 700; font-size: 0.9rem; margin-bottom: 12px; }
+        .card.past-show .date { color: var(--text-muted); }
+
+        .btn { background: transparent; color: var(--text); border: 1px solid var(--primary); padding: 10px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; border-radius: 50px; cursor: pointer; transition: all 0.3s; width: 100%; }
+        .card.next-show .btn { background: var(--primary); color: black; }
+        .card.past-show .btn { border-color: #444; color: #666; cursor: not-allowed; pointer-events: none; }
+
+        .marquee-container { background: var(--primary); color: black; padding: 10px 0; overflow: hidden; white-space: nowrap; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: 2px; text-transform: uppercase; width: 100%; margin-top: auto; }
+        .marquee-content { display: inline-block; animation: marquee 15s linear infinite; }
+
+        /* МОДАЛЬНОЕ ОКНО */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; overflow-y: auto; }
+        .modal-overlay.active { display: flex; }
+
+        .modal-container { position: relative; width: 100%; max-width: 600px; margin: auto; background: #1a1a1a; border: 1px solid #333; border-radius: 20px; padding: 25px; }
+
+        .checkout-form { display: flex; flex-direction: column; gap: 15px; }
+        .checkout-form h2 { font-family: 'Oswald', sans-serif; text-align: center; font-size: 1.5rem; text-transform: uppercase; }
+        .checkout-form p.subtitle { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px; }
+        
+        /* Стили для ошибки */
+        .error-msg {
+            background: rgba(255, 0, 51, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+            display: none; /* Скрыта по умолчанию */
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; }
+        .form-group input { background: var(--input-bg); border: 1px solid #333; color: white; padding: 12px 15px; border-radius: 8px; font-size: 1rem; outline: none; }
+        .form-group input:focus { border-color: var(--primary); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        .ticket-type-selector { display: flex; gap: 10px; }
+        .type-option { flex: 1; }
+        .type-option input[type="radio"] { display: none; }
+        .type-option label { display: block; text-align: center; padding: 12px; background: var(--input-bg); border: 1px solid #333; border-radius: 8px; cursor: pointer; font-weight: 700; }
+        .type-option input[type="radio"]:checked + label { background: rgba(255, 0, 51, 0.1); border-color: var(--primary); color: var(--primary); }
+
+        .btn-submit { background: var(--primary); color: black; border: none; padding: 15px; font-size: 1rem; font-weight: 900; text-transform: uppercase; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+
+        .ticket-view { display: none; }
+        .ticket-wrapper { background: #111; border-radius: 15px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid #333; width: 100%; }
+        .ticket-wrapper.golden { border: 2px solid var(--gold); box-shadow: 0 0 30px rgba(255, 215, 0, 0.3); }
+        .ticket-wrapper.golden .ticket-main { background: linear-gradient(135deg, #2a2200 0%, #110e00 100%); }
+        .ticket-wrapper.golden .ticket-title span, .ticket-wrapper.golden .date, .ticket-wrapper.golden .seat-info span, .ticket-wrapper.golden .t-holder-name { color: var(--gold); }
+
+        .ticket-main { padding: 20px; background: #1a1a1a; border-bottom: 2px dashed #333; position: relative; }
+        .ticket-main::before, .ticket-main::after { content: ''; position: absolute; bottom: -10px; width: 20px; height: 20px; background-color: #1a1a1a; border-radius: 50%; z-index: 2; border: 1px solid #333; }
+        .ticket-main::before { left: 20%; border-right: none; }
+        .ticket-main::after { right: 20%; border-left: none; }
+        
+        .ticket-header { font-family: 'Oswald', sans-serif; font-size: 0.8rem; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; }
+        .ticket-title { font-family: 'Oswald', sans-serif; font-size: 2rem; font-weight: 900; line-height: 1; margin-bottom: 15px; text-transform: uppercase; }
+        .ticket-title span { color: var(--primary); }
+        
+        .ticket-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .info-group p { color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; margin-bottom: 3px; }
+        .info-group h4 { font-size: 1rem; font-weight: 700; }
+        .t-holder-name { color: var(--text); text-transform: uppercase; font-size: 1rem; margin-bottom: 5px; font-weight: bold; word-break: break-word; }
+
+        .ticket-stub { padding: 20px; background: #0d0d0d; display: flex; justify-content: space-between; align-items: center; }
+        .barcode { width: 100px; height: 40px; background: repeating-linear-gradient(to right, #fff, #fff 2px, #000 2px, #000 4px, #fff 4px, #fff 5px, #000 5px, #000 8px); opacity: 0.8; }
+        .seat-info { font-size: 1rem; font-weight: 700; text-align: right; }
+        .seat-info span { color: var(--primary); }
+
+        .modal-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-action { background: #222; border: none; color: white; padding: 12px; border-radius: 50px; font-weight: bold; cursor: pointer; flex: 1; font-size: 0.9rem; display: flex; justify-content: center; align-items: center; gap: 5px; }
+        .btn-action.primary { background: var(--primary); color: black; }
+        
+        .close-modal { position: absolute; top: 15px; right: 15px; background: #333; border: none; color: white; font-size: 1.2rem; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; z-index: 1001; display: flex; align-items: center; justify-content: center; }
+
+        @media (min-width: 901px) {
+            .main-content { flex-direction: row; align-items: center; padding: 40px; height: calc(100vh - 150px); }
+            .hero-side { flex: 1; padding-right: 20px; }
+            .grid-side { flex: 1; }
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            .ticket-wrapper { flex-direction: row; }
+            .ticket-main { border-bottom: none; border-right: 2px dashed #333; flex: 1; padding: 30px; }
+            .ticket-main::before, .ticket-main::after { bottom: auto; right: -10px; left: auto; }
+            .ticket-main::before { top: -10px; border-bottom: none; border-left: none; }
+            .ticket-main::after { bottom: -10px; border-top: none; border-left: none; }
+            .ticket-stub { width: 200px; flex-direction: column; align-items: center; text-align: center; padding: 30px 20px; }
+            .barcode { width: 100%; height: 60px; margin-bottom: 15px; }
+            .seat-info { text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <div class="logo">MADKID <span>TOUR</span></div>
+        </header>
+
+        <main class="main-content">
+            <div class="hero-side">
+                <h1>МЕДКИДОВЦЫ<br><span>ОБЩИЙ СБОР</span></h1>
+                
+                <div class="countdown-wrapper" id="countdown-wrapper">
+                    <div class="countdown-title" id="countdown-title">До концерта в <span id="next-city-name">...</span></div>
+                    <div class="countdown-container" id="countdown">
+                        <div class="countdown-box"><span id="days">00</span><p>Дней</p></div>
+                        <div class="countdown-box"><span id="hours">00</span><p>Часов</p></div>
+                        <div class="countdown-box"><span id="minutes">00</span><p>Мин</p></div>
+                        <div class="countdown-box"><span id="seconds">00</span><p>Сек</p></div>
+                    </div>
+                </div>
+
+                <p class="desc">Мой первый большой тур и первый стадиум! Выбирай свой город и забирай билет в Роблокс.</p>
+            </div>
+
+            <div class="grid-side">
+                <div class="grid" id="tour-grid"></div>
+            </div>
+        </main>
+
+        <div class="marquee-container">
+            <div class="marquee-content">
+                MADKID TOUR 2024 • ROBLOX CONCERT EXPERIENCE • LIMITED SEATS • MADKID TOUR 2024 • ROBLOX CONCERT EXPERIENCE • LIMITED SEATS • 
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно -->
+    <div class="modal-overlay" id="ticket-modal">
+        <div class="modal-container">
+            <button class="close-modal" id="close-btn">✕</button>
+            
+            <div class="checkout-form" id="checkout-form">
+                <h2>Оформление билета</h2>
+                <p class="subtitle">Вводите любые фейковые данные. Настоящие писать необязательно!</p>
+                
+                <!-- Блок для ошибки -->
+                <div class="error-msg" id="error-msg">Пожалуйста, заполните все поля!</div>
+
+                <div class="form-group">
+                    <label>Тип билета</label>
+                    <div class="ticket-type-selector">
+                        <div class="type-option">
+                            <input type="radio" id="type-dance" name="ticketType" value="ТАНЦПОЛ" checked>
+                            <label for="type-dance">Танцпол</label>
+                        </div>
+                        <div class="type-option">
+                            <input type="radio" id="type-vip" name="ticketType" value="VIP PASS">
+                            <label for="type-vip">VIP</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Имя</label>
+                        <input type="text" id="inp-name" placeholder="Любое (напр. Ваня)">
+                    </div>
+                    <div class="form-group">
+                        <label>Фамилия</label>
+                        <input type="text" id="inp-surname" placeholder="Любая (напр. Пупкин)">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Телефон</label>
+                        <input type="text" id="inp-phone" placeholder="Любой (напр. 12345)">
+                    </div>
+                    <div class="form-group">
+                        <label>Город</label>
+                        <input type="text" id="inp-city" readonly style="opacity: 0.7;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Адрес (для Роблокса)</label>
+                    <input type="text" id="inp-street" placeholder="Любой (напр. ул. Пушкина)">
+                </div>
+
+                <button type="button" class="btn-submit" id="submit-btn">Оформить билет</button>
+            </div>
+
+            <div class="ticket-view" id="ticket-view">
+                <div class="ticket-wrapper" id="ticket-to-download">
+                    <div class="ticket-main">
+                        <div class="ticket-header" id="t-header">Official Roblox Pass</div>
+                        <div class="ticket-title">MADKID<br><span>LIVE</span></div>
+                        
+                        <div class="t-holder-name" id="t-holder">ИВАН ИВАНОВ</div>
+                        
+                        <div class="ticket-info">
+                            <div class="info-group"><p>Город</p><h4 id="t-city">Алматы</h4></div>
+                            <div class="info-group"><p>Дата</p><h4 id="t-date">01.11</h4></div>
+                            <div class="info-group"><p>Время</p><h4>20:00</h4></div>
+                            <div class="info-group"><p>Вход</p><h4 id="t-type">ТАНЦПОЛ</h4></div>
+                        </div>
+                    </div>
+                    
+                    <div class="ticket-stub">
+                        <div><div class="barcode"></div></div>
+                        <div class="seat-info">Ряд: <span id="t-row">12</span><br>Место: <span id="t-seat">4</span></div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="btn-action primary" id="share-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                        Поделиться
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            try {
+                const cities = [
+                    { name: "Алматы", date: "01.11", day: 1, month: 11 },
+                    { name: "Новосибирск", date: "25.12", day: 25, month: 12 },
+                    { name: "Калининград", date: "28.12", day: 28, month: 12 },
+                    { name: "Польша", date: "30.12", day: 30, month: 12 },
+                    { name: "Беларусь", date: "01.01", day: 1, month: 1 },
+                    { name: "Казань", date: "03.01", day: 3, month: 1 },
+                    { name: "Сочи", date: "08.01", day: 8, month: 1 }
+                ];
+
+                const now = new Date();
+                const currentYear = now.getFullYear();
+                const currentMonth = now.getMonth(); 
+
+                let parsedCities = cities.map(c => {
+                    let year = currentYear;
+                    if (currentMonth >= 10 && c.month <= 2) year++; 
+                    let fullDate = new Date(year, c.month - 1, c.day, 20, 0, 0);
+                    return { ...c, fullDate: fullDate };
+                });
+
+                let nextConcert = null;
+                let minDiff = Infinity;
+
+                parsedCities.forEach(c => {
+                    const diff = c.fullDate - now;
+                    if (diff > 0 && diff < minDiff) {
+                        minDiff = diff;
+                        nextConcert = c;
+                    }
+                });
+
+                const grid = document.getElementById('tour-grid');
+                grid.innerHTML = ''; 
+                
+                parsedCities.forEach((c) => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    
+                    const isPast = c.fullDate < now;
+                    const isNext = nextConcert && c.name === nextConcert.name;
+
+                    let badgeHTML = ''; let stampHTML = ''; let btnHTML = '';
+
+                    if (isPast) {
+                        card.classList.add('past-show');
+                        stampHTML = '<div class="stamp-past">ПРОШЕЛ</div>';
+                        btnHTML = `<button class="btn" disabled>Завершен</button>`;
+                    } else if (isNext) {
+                        card.classList.add('next-show');
+                        badgeHTML = '<div class="badge-next">Ближайший</div>';
+                        btnHTML = `<button class="btn" onclick="window.openCheckout('${c.name}', '${c.date}')">Билет</button>`;
+                    } else {
+                        btnHTML = `<button class="btn" onclick="window.openCheckout('${c.name}', '${c.date}')">Билет</button>`;
+                    }
+
+                    card.innerHTML = `${badgeHTML}${stampHTML}<div class="city">${c.name}</div><div class="date">${c.date}</div>${btnHTML}`;
+                    grid.appendChild(card);
+                });
+
+                const timerDisplay = document.getElementById('countdown');
+                const nextCityNameSpan = document.getElementById('next-city-name');
+
+                if (nextConcert) {
+                    nextCityNameSpan.textContent = nextConcert.name;
+                    const targetDate = nextConcert.fullDate.getTime();
+                    
+                    function updateTimer() {
+                        const currentTime = new Date().getTime();
+                        const distance = targetDate - currentTime;
+
+                        if (distance < 0) {
+                            timerDisplay.innerHTML = "<h3 style='color:var(--primary); font-size:1.2rem;'>КОНЦЕРТ НАЧАЛСЯ!</h3>";
+                            return;
+                        }
+
+                        document.getElementById('days').textContent = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                        document.getElementById('hours').textContent = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                        document.getElementById('minutes').textContent = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                        document.getElementById('seconds').textContent = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+                    }
+                    
+                    updateTimer();
+                    setInterval(updateTimer, 1000); 
+                } else {
+                    document.getElementById('countdown-title').innerHTML = "ТУР ЗАВЕРШЕН!";
+                    timerDisplay.style.display = 'none';
+                }
+
+                const modal = document.getElementById('ticket-modal');
+                const closeBtn = document.getElementById('close-btn');
+                const checkoutForm = document.getElementById('checkout-form');
+                const ticketView = document.getElementById('ticket-view');
+                const shareBtn = document.getElementById('share-btn');
+                const ticketWrapper = document.getElementById('ticket-to-download');
+                const submitBtn = document.getElementById('submit-btn');
+                const errorMsg = document.getElementById('error-msg'); // Блок ошибки
+
+                let currentCity = "";
+                let currentDate = "";
+
+                window.openCheckout = function(cityName, cityDate) {
+                    currentCity = cityName;
+                    currentDate = cityDate;
+                    
+                    // Очищаем поля при открытии
+                    document.getElementById('inp-name').value = "";
+                    document.getElementById('inp-surname').value = "";
+                    document.getElementById('inp-phone').value = "";
+                    document.getElementById('inp-street').value = "";
+                    document.getElementById('inp-city').value = cityName;
+                    
+                    // Скрываем ошибку
+                    errorMsg.style.display = 'none';
+
+                    checkoutForm.style.display = 'flex';
+                    ticketView.style.display = 'none';
+
+                    modal.classList.add('active');
+                }
+
+                submitBtn.onclick = function() {
+                    // Получаем значения из полей
+                    let name = document.getElementById('inp-name').value.trim();
+                    let surname = document.getElementById('inp-surname').value.trim();
+                    let phone = document.getElementById('inp-phone').value.trim();
+                    let street = document.getElementById('inp-street').value.trim();
+                    
+                    // ПРОВЕРКА: Если хотя бы одно поле пустое - показываем ошибку
+                    if (!name || !surname || !phone || !street) {
+                        errorMsg.style.display = 'block'; // Показываем красный блок
+                        return; // Останавливаем генерацию билета
+                    }
+
+                    // Если всё заполнено - скрываем ошибку и продолжаем
+                    errorMsg.style.display = 'none';
+
+                    // Переводим имя и фамилию в верхний регистр для билета
+                    name = name.toUpperCase();
+                    surname = surname.toUpperCase();
+                    
+                    const type = document.querySelector('input[name="ticketType"]:checked').value;
+
+                    document.getElementById('t-city').textContent = currentCity;
+                    document.getElementById('t-date').textContent = currentDate;
+                    document.getElementById('t-holder').textContent = `${name} ${surname}`;
+                    document.getElementById('t-type').textContent = type;
+                    
+                    document.getElementById('t-row').textContent = Math.floor(Math.random() * 20) + 1;
+                    document.getElementById('t-seat').textContent = Math.floor(Math.random() * 50) + 1;
+
+                    const isGolden = (type === "VIP PASS") && (Math.random() < 0.2);
+                    
+                    if (isGolden) {
+                        ticketWrapper.classList.add('golden');
+                        document.getElementById('t-header').textContent = "EXCLUSIVE GOLDEN TICKET";
+                    } else {
+                        ticketWrapper.classList.remove('golden');
+                        document.getElementById('t-header').textContent = "Official Roblox Pass";
+                    }
+
+                    checkoutForm.style.display = 'none';
+                    ticketView.style.display = 'block';
+                };
+
+                closeBtn.onclick = function() {
+                    modal.classList.remove('active');
+                };
+
+                modal.onclick = function(e) {
+                    if(e.target === modal) modal.classList.remove('active');
+                };
+
+                shareBtn.onclick = async function() {
+                    const city = document.getElementById('t-city').textContent;
+                    const holder = document.getElementById('t-holder').textContent;
+                    const textToShare = `Я (${holder}) забрал билет на концерт MADKID в городе ${city}! Присоединяйся!`;
+                    
+                    if (navigator.share) {
+                        try {
+                            await navigator.share({
+                                title: 'MADKID Roblox Tour',
+                                text: textToShare,
+                                url: window.location.href
+                            });
+                        } catch (err) { console.log('Ошибка', err); }
+                    } else {
+                        try {
+                            await navigator.clipboard.writeText(textToShare + ' ' + window.location.href);
+                            alert('Текст скопирован!');
+                        } catch (err) {
+                            alert('Сделайте скриншот билета!');
+                        }
+                    }
+                };
+            } catch (error) {
+                alert("Ошибка скрипта: " + error.message);
+            }
+        };
+    </script>
+</body>
+</html>
